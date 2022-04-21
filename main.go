@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"log"
 	"web-api/book"
 	"web-api/handler"
@@ -20,6 +20,34 @@ func main() {
 	}
 
 	db.AutoMigrate(&book.Book{})
+
+	bookRepository := book.NewRepository(db)
+	bookService := book.NewService(bookRepository)
+
+	// FindAll	
+
+	// books, err := bookRepository.FindAll()
+	
+	// for _, book := range books {
+	// 	fmt.Println("Title :", book.Title)
+	// }
+
+	// FindByID
+
+	// book, err := bookRepository.FindByID(2)		
+	// 	fmt.Println("Title :", book.Title)
+	
+	// Create
+
+	bookRequest := book.BookRequest{
+		Title: "Gundam",		
+		Price: "100000",
+		
+	}
+
+	// bookRepository.Create(book) 
+	bookService.Create(bookRequest)
+
 	// ------CREATE (CRUD)------
 	// https://gorm.io/docs/index.html
 
@@ -77,21 +105,21 @@ func main() {
 	// ------DELETE (CRUD)------
 	// https://gorm.io/docs/index.html
 
-	var book book.Book
+	// var book book.Book
 
-	err = db.Debug().Where("id = ?", 1).Find(&book).Error
-	if err != nil {
-		fmt.Println("==========================")
-		fmt.Println("error Deleting book record")
-		fmt.Println("==========================")
-	}
+	// err = db.Debug().Where("id = ?", 1).Find(&book).Error
+	// if err != nil {
+	// 	fmt.Println("==========================")
+	// 	fmt.Println("error Deleting book record")
+	// 	fmt.Println("==========================")
+	// }
 
-	err = db.Delete(&book).Error
-	if err != nil {
-		fmt.Println("==========================")
-		fmt.Println("error deleting book record")
-		fmt.Println("==========================")
-	}
+	// err = db.Delete(&book).Error
+	// if err != nil {
+	// 	fmt.Println("==========================")
+	// 	fmt.Println("error deleting book record")
+	// 	fmt.Println("==========================")
+	// }	
 
 	r := gin.Default()
 	v1 := r.Group("/v1")	
@@ -108,3 +136,11 @@ func main() {
 //  Tutorial Golang Web API Bahasa Indonesia - Full Course
 // https://www.youtube.com/watch?v=GjI0GSvmcSU&t=3261s
 // ==========
+
+//goal layer---
+// main
+// handler/controller
+// service
+// repository
+// db
+// mysql
