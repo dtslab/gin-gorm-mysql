@@ -26,11 +26,16 @@ func (s *service) FindByID(ID int) (Book, error) {
 }
 
 func (s *service) Create(bookRequest BookRequest) (Book, error) {
-	price, _ := bookRequest.Price.(int64) // convert interface to float64 dari sebelumnya price.Int64
-	// problemnya di 2:16:29 source https://www.youtube.com/watch?v=GjI0GSvmcSU&t=3261s
+	price, _ := bookRequest.Price.Int64()
+	rating, _ := bookRequest.Rating.Int64()
+	discount, _ := bookRequest.Discount.Int64()
+
 	book := Book{
-		Title: bookRequest.Title,
-		Price: int(price),
+		Title:       bookRequest.Title,
+		Price:       int(price),
+		Description: bookRequest.Description,
+		Rating:      int(rating),
+		Discount:    int(discount),
 	}
 	newBook, err := s.repository.Create(book)
 	return newBook, err

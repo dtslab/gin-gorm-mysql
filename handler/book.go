@@ -9,21 +9,29 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func RootHandler(c *gin.Context) {
+type bookHandler struct {
+	bookService book.Service
+}
+
+func NewBookHandler(bookService book.Service) *bookHandler {
+	return &bookHandler{bookService}
+}
+
+func (h *bookHandler) RootHandler(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"name": "Dedy Tri Samudra",
 		"bio": "I'm a software engineer",
 	})
 }
 
-func HelloHandler(c *gin.Context) {
+func (h *bookHandler) HelloHandler(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"content": "Hello World",
 		"subtitle": "belajar gin framework",
 	})
 }
 
-func BooksHandler(c *gin.Context) {
+func (h *bookHandler) BooksHandler(c *gin.Context) {
 	id := c.Param("id")
 	title := c.Param("title")
 	c.JSON(200, gin.H{
@@ -32,7 +40,7 @@ func BooksHandler(c *gin.Context) {
 	})
 }
 
-func QueryHandler(c *gin.Context) {
+func (h *bookHandler) QueryHandler(c *gin.Context) {
 	title := c.Query("title")
 	price := c.Query("price")
 	c.JSON(200, gin.H{
@@ -41,9 +49,9 @@ func QueryHandler(c *gin.Context) {
 	})
 }
 
-func PostBooksHandler(c *gin.Context) { 
-	var bookInput book.BookRequest
-	err := c.ShouldBindJSON(&bookInput)	
+func (h *bookHandler) PostBooksHandler(c *gin.Context) { 
+	var bookRequest book.BookRequest
+	err := c.ShouldBindJSON(&bookRequest)	
 	if err != nil {		
 		errorMessages := []string{}
 		for _, e := range err.(validator.ValidationErrors) {
@@ -55,8 +63,18 @@ func PostBooksHandler(c *gin.Context) {
 		})
 		return					
 	}
+
+	book, err := h.bookService.Create(bookRequest)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors": err,
+		})
+
+		return
+	}
+
 	c.JSON(200, gin.H{
-		"title": bookInput.Title,
-		"price": bookInput.Price,
+		"data": book,
 	})
 }

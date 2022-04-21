@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "fmt"
 	"log"
 	"web-api/book"
 	"web-api/handler"
@@ -23,111 +22,16 @@ func main() {
 
 	bookRepository := book.NewRepository(db)
 	bookService := book.NewService(bookRepository)
-
-	// FindAll	
-
-	// books, err := bookRepository.FindAll()
+	bookHandler := handler.NewBookHandler(bookService)	// 2:25:11 
 	
-	// for _, book := range books {
-	// 	fmt.Println("Title :", book.Title)
-	// }
-
-	// FindByID
-
-	// book, err := bookRepository.FindByID(2)		
-	// 	fmt.Println("Title :", book.Title)
-	
-	// Create
-
-	bookRequest := book.BookRequest{
-		Title: "Gundam",		
-		Price: "100000",
-		
-	}
-
-	// bookRepository.Create(book) 
-	bookService.Create(bookRequest)
-
-	// ------CREATE (CRUD)------
-	// https://gorm.io/docs/index.html
-
-	// book := book.Book{}
-	// book.Title = "Belajar Tatabog"
-	// book.Price = 60000
-	// book.Discount = 10
-	// book.Rating = 4
-	// book.Description = "buku belajar masak"
-
-	// err = db.Create(&book).Error
-	// if err != nil {
-	// 	fmt.Println("==========================")
-	// 	fmt.Println("error creating book record")
-	// 	fmt.Println("==========================")
-	// }
-
-	// ------READ (CRUD)------
-	// https://gorm.io/docs/index.html
-
-	// var book []book.Book
-
-	// err = db.Debug().Where("rating = ?", 4).Find(&book).Error
-	// if err != nil {
-	// 	fmt.Println("==========================")
-	// 	fmt.Println("error finding book record")
-	// 	fmt.Println("==========================")
-	// }
-
-	// for _, b := range books {
-	// 	fmt.Println("Title : ", b.Title)
-	// 	fmt.Println("book object %v", b)
-	// }
-
-	// ------UPDATE (CRUD)------
-	// https://gorm.io/docs/index.html
-
-	// var book book.Book
-
-	// err = db.Debug().Where("id = ?", 1).Find(&book).Error
-	// if err != nil {
-	// 	fmt.Println("==========================")
-	// 	fmt.Println("error Update book record")
-	// 	fmt.Println("==========================")
-	// }
-
-	// book.Title = "Belajar Tataboga (Revisi)"
-	// err = db.Save(&book).Error
-	// if err != nil {
-	// 	fmt.Println("==========================")
-	// 	fmt.Println("error Update book record")
-	// 	fmt.Println("==========================")
-	// }
-
-	// ------DELETE (CRUD)------
-	// https://gorm.io/docs/index.html
-
-	// var book book.Book
-
-	// err = db.Debug().Where("id = ?", 1).Find(&book).Error
-	// if err != nil {
-	// 	fmt.Println("==========================")
-	// 	fmt.Println("error Deleting book record")
-	// 	fmt.Println("==========================")
-	// }
-
-	// err = db.Delete(&book).Error
-	// if err != nil {
-	// 	fmt.Println("==========================")
-	// 	fmt.Println("error deleting book record")
-	// 	fmt.Println("==========================")
-	// }	
 
 	r := gin.Default()
 	v1 := r.Group("/v1")	
-	v1.GET("/", handler.RootHandler)
-	v1.GET("/hello", handler.HelloHandler)
-	v1.GET("/books/:id/:title", handler.BooksHandler)
-	v1.GET("/query", handler.QueryHandler)
-	v1.POST("/books", handler.PostBooksHandler)
+	v1.GET("/", bookHandler.RootHandler)
+	v1.GET("/hello", bookHandler.HelloHandler)
+	v1.GET("/books/:id/:title", bookHandler.BooksHandler)
+	v1.GET("/query", bookHandler.QueryHandler)
+	v1.POST("/books", bookHandler.PostBooksHandler)
 
 	r.Run() 
 }
