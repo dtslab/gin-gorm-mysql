@@ -6,6 +6,8 @@ type Repository interface {
 	FindAll() ([]Book, error)
 	FindByID(ID int) (Book, error)
 	Create(book Book) (Book, error)
+	Update(book Book) (Book, error)
+	Delete(book Book) (Book, error)
 }
 
 type repository struct {
@@ -16,7 +18,7 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func ( r *repository) FindAll() ([]Book, error) {
+func (r *repository) FindAll() ([]Book, error) {
 	var books []Book
 
 	err := r.db.Find(&books).Error
@@ -24,7 +26,7 @@ func ( r *repository) FindAll() ([]Book, error) {
 	return books, err
 }
 
-func ( r *repository) FindByID(ID int) (Book, error) {
+func (r *repository) FindByID(ID int) (Book, error) {
 	var book Book
 
 	err := r.db.Find(&book, ID).Error
@@ -32,8 +34,20 @@ func ( r *repository) FindByID(ID int) (Book, error) {
 	return book, err
 }
 
-func ( r *repository) Create(book Book) (Book, error) {
+func (r *repository) Create(book Book) (Book, error) {
 	err := r.db.Create(&book).Error
+	
+	return book, err
+}
+
+func (r *repository) Update(book Book) (Book, error) {
+	err := r.db.Save(&book).Error
+	
+	return book, err
+}
+
+func (r *repository) Delete(book Book) (Book, error) {
+	err := r.db.Delete(&book).Error
 	
 	return book, err
 }
